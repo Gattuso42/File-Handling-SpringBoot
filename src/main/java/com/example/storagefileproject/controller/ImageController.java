@@ -1,5 +1,6 @@
 package com.example.storagefileproject.controller;
 
+import com.example.storagefileproject.repository.FileDataRepository;
 import com.example.storagefileproject.service.StorageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,20 @@ public class ImageController {
     @GetMapping("/download/{fileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String fileName){
         byte[] image = storageService.downloadImage(fileName);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(image);
+    }
+
+    @PostMapping("/upload-directory")
+    public ResponseEntity<?> uploadImageToDirectory(@RequestParam("image")MultipartFile file) throws IOException {
+        String response = storageService.uploadImageToDirectory(file);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/download-directory/{fileName}")
+    public ResponseEntity<?> downloadImageToDirectory(@PathVariable String fileName) throws IOException {
+        byte[] image = storageService.downloadImageFromDirectory(fileName);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
